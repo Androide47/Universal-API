@@ -1,134 +1,160 @@
-# Flask Blog API with Payment and Subscription Integration
+# Blog API with Payment Integration
 
-This project is a REST API built with Flask that powers a blog site, including functionalities for managing users, profiles, blog posts, videos, and administrative features. The API also integrates payment and subscription methods using Stripe.
-
-## Table of Contents
-
-- [Features](#features)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Database Migrations](#database-migrations)
-- [Running the Application](#running-the-application)
-- [API Endpoints](#api-endpoints)
-- [Payment and Subscription Integration](#payment-and-subscription-integration)
-- [Deployment](#deployment)
-- [License](#license)
+This is a Flask-based REST API for a blog site, designed to handle user management, profiles, blog posts, video content, and admin functionalities. The API also integrates payment and subscription management using Stripe and PayPal.
 
 ## Features
 
-- **User Management:** Create, update, and manage users and profiles.
-- **Blog Management:** Create, update, and delete blog posts.
-- **Video Management:** Upload, manage, and display videos.
-- **Admin Features:** Manage site content, send mass emails, and view subscription status.
-- **Payment Integration:** Handle payments and subscriptions via Stripe.
-- **JWT Authentication:** Secure API endpoints with JSON Web Tokens (JWT).
-- **SQLite Database:** Manage data using SQLite, with support for migrations.
+- **User Management:** Sign up, log in, and profile management.
+- **Blog Management:** Create, update, delete, and retrieve blog posts.
+- **Video Management:** Upload, manage, and retrieve video content.
+- **Admin Site:** Manage users, send mass emails, and edit blog and video content.
+- **Payment Integration:** Support for Stripe and PayPal for handling payments and subscriptions.
+- **SQLite Database:** Used for storing all application data.
 
-## Installation
+## Getting Started
 
-1. **Clone the Repository:**
+### Prerequisites
+
+- Python 3.7+
+- Flask
+- SQLite
+- Stripe account
+- PayPal Developer account
+
+### Installation
+
+1. **Clone the repository:**
+
    ```bash
-   git clone https://github.com/yourusername/yourrepository.git
-   cd yourrepository
+   git clone https://github.com/Androide47/AvanzaStudio.git
+   cd AvanzaStudio
    ```
 
-2. **Create and Activate a Virtual Environment:**
+2. **Create and activate a virtual environment:**
+
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   python3 -m venv venv
+   source venv/bin/activate
    ```
 
-3. **Install Dependencies:**
+3. **Install the dependencies:**
+
    ```bash
    pip install -r requirements.txt
    ```
 
-## Configuration
+4. **Set up environment variables:**
 
-1. **Environment Variables:**
-   Create a `.env` file or export the necessary environment variables:
+   Create a `.env` file in the root directory and add the following:
+
    ```bash
-   export SECRET_KEY='your-secret-key'
-   export JWT_SECRET_KEY='your-jwt-secret-key'
-   export STRIPE_API_KEY='your-stripe-api-key'
-   export MAIL_USERNAME='your-email@example.com'
-   export MAIL_PASSWORD='your-email-password'
+   FLASK_APP=run.py
+   FLASK_ENV=development
+   SECRET_KEY=your-secret-key
+   STRIPE_API_KEY=your-stripe-api-key
+   STRIPE_WEBHOOK_SECRET=your-stripe-webhook-secret
+   PAYPAL_CLIENT_ID=your-paypal-client-id
+   PAYPAL_CLIENT_SECRET=your-paypal-client-secret
+   PAYPAL_MODE=sandbox  # 'live' for production
    ```
 
-2. **Configuration File:**
-   The `config.py` file includes all necessary configurations for the project, including database URI, JWT settings, and email server details.
+5. **Run the application:**
 
-## Database Migrations
-
-1. **Initialize the Database:**
-   ```bash
-   flask db init
-   ```
-
-2. **Create and Apply Migrations:**
-   ```bash
-   flask db migrate -m "Initial migration."
-   flask db upgrade
-   ```
-
-## Running the Application
-
-1. **Run the Flask Application:**
    ```bash
    flask run
    ```
 
-2. **Access the API:**
-   Open your browser or API client (like Postman) and navigate to `http://127.0.0.1:5000/`.
+### Database Setup
 
-## API Endpoints
+1. **Initialize the SQLite database:**
 
-Here are some of the key endpoints available in this API:
+   ```bash
+   flask db init
+   flask db migrate -m "Initial migration."
+   flask db upgrade
+   ```
 
-- **User Management:**
-  - `POST /users`: Create a new user
-  - `GET /users/<id>`: Get user details
+### API Endpoints
 
-- **Blog Management:**
-  - `POST /blogs`: Create a new blog post
-  - `GET /blogs/<id>`: Get blog post details
+#### User Management
 
-- **Video Management:**
-  - `POST /videos`: Upload a new video
-  - `GET /videos/<id>`: Get video details
+- **`POST /api/register`**
+  - Register a new user.
+- **`POST /api/login`**
+  - Log in a user.
 
-- **Admin Management:**
-  - `POST /admin/send-emails`: Send mass emails
-  - `GET /admin/subscriptions`: View all subscriptions
+#### Blog Management
 
-- **Payment and Subscription:**
-  - `POST /create-checkout-session`: Create a Stripe checkout session
-  - `POST /webhook`: Stripe webhook for managing subscription events
+- **`GET /api/blogs`**
+  - Retrieve all blog posts.
+- **`POST /api/blogs`**
+  - Create a new blog post.
+- **`PUT /api/blogs/<id>`**
+  - Update an existing blog post.
+- **`DELETE /api/blogs/<id>`**
+  - Delete a blog post.
 
-## Payment and Subscription Integration
+#### Video Management
 
-This API integrates with Stripe to handle payments and subscriptions. The `create-checkout-session` endpoint allows clients to initiate a payment, and the `webhook` endpoint processes events such as successful payments or subscription renewals.
+- **`POST /api/videos`**
+  - Upload a new video.
+- **`GET /api/videos`**
+  - Retrieve all videos.
+- **`DELETE /api/videos/<id>`**
+  - Delete a video.
 
-### Testing Payments
+#### Admin Site
 
-Use the test keys provided by Stripe during development to simulate payments without real transactions.
+- **`POST /api/admin/send-emails`**
+  - Send mass emails to users.
+- **`PUT /api/admin/blogs/<id>`**
+  - Edit a blog post.
+- **`PUT /api/admin/videos/<id>`**
+  - Manage video content.
 
-## Deployment
+### Payment and Subscription Integration
 
-To deploy this API:
+This API supports both Stripe and PayPal for handling payments and subscriptions.
 
-1. **Upload to cPanel:**
-   - Compress your project folder and upload it to your cPanel file manager.
-   - Extract the files and configure your Python application in cPanel.
+#### Stripe
 
-2. **Set Environment Variables:**
-   - Use cPanel’s environment management tool to set your environment variables.
+- **Endpoint:** `POST /api/stripe/checkout`
+- **Description:** Creates a Stripe checkout session for subscription payments.
 
-3. **Run the Application:**
-   - Start your Flask application through the cPanel interface.
+- **Endpoint:** `POST /api/stripe/webhook`
+- **Description:** Handles Stripe webhook events.
 
-## License
+#### PayPal
 
-This project is licensed under the MIT License. See the `LICENSE` file for more details.
+- **Endpoint:** `POST /api/paypal/payment`
+- **Description:** Initiates a PayPal payment and redirects the user to PayPal for approval.
 
----
+- **Endpoint:** `GET /api/paypal/payment/execute`
+- **Description:** Executes the PayPal payment after user approval.
+
+- **Endpoint:** `GET /api/paypal/payment/cancel`
+- **Description:** Handles payment cancellation.
+
+### Testing
+
+To run the tests, use the following command:
+
+```bash
+flask test
+```
+
+### Deployment
+
+For deployment, make sure to:
+
+- Set `FLASK_ENV=production`.
+- Use `gunicorn` or another WSGI server to serve the app.
+- Secure environment variables and keys.
+
+### Contributing
+
+Please feel free to submit issues or pull requests.
+
+### License
+
+This project is licensed under the MIT License.
